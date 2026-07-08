@@ -46,6 +46,7 @@ async function createBuildWatcher(name, configFile, onRebuild) {
     build: {
       watch: {},
     },
+    clearScreen: false,
     configFile,
     mode: 'development',
     plugins: [
@@ -216,6 +217,7 @@ async function shutdown(exitCode = 0) {
 
 async function main() {
   rendererServer = await createServer({
+    clearScreen: false,
     configFile: rendererConfig,
     mode: 'development',
   })
