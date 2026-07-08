@@ -2,7 +2,7 @@
   "name": "electron-vite-starter",
   "productName": "Electron Vite Starter",
   "description": "A production-ready Electron, React, TypeScript, and Vite foundation.",
-  "author": "Mohammed Arham Khan",
+  "author": "Arham Khan",
   "private": true,
   "version": "0.0.0",
   "type": "module",
