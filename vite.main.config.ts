@@ -26,7 +26,7 @@ function isExternal(id: string) {
   )
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   build: {
     copyPublicDir: false,
     emptyOutDir: true,
@@ -41,7 +41,7 @@ export default defineConfig({
     rolldownOptions: {
       external: isExternal,
     },
-    sourcemap: true,
+    sourcemap: mode === 'development',
     target: 'node22',
   },
-})
+}))

@@ -11,7 +11,7 @@ const sandboxExternals = new Set([
   'url',
 ])
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   build: {
     copyPublicDir: false,
     emptyOutDir: true,
@@ -26,7 +26,7 @@ export default defineConfig({
     rolldownOptions: {
       external: (id) => sandboxExternals.has(id),
     },
-    sourcemap: true,
+    sourcemap: mode === 'development',
     target: 'node22',
   },
-})
+}))

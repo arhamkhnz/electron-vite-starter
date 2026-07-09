@@ -49,7 +49,7 @@ src/
 
 ## Requirements
 
-- Node.js
+- Node.js 20.19+ or 22.12+
 - npm
 
 ## Getting started
@@ -116,12 +116,14 @@ The current setup includes:
 - disabled Node.js integration in the renderer
 - a narrow, typed `contextBridge` API
 - IPC sender and argument validation
+- navigation and new-window restrictions
+- a renderer Content Security Policy
 - ASAR packaging
 - restrictive Electron fuses for packaged applications
 
 The renderer does not receive direct access to `ipcRenderer`, Node.js, the filesystem, or other privileged Electron APIs. Add new capabilities through a typed preload API and validate every request in the main process.
 
-Navigation restrictions and a Content Security Policy are still to be added before the starter is considered complete.
+Production still uses `file://` through `loadFile`. A custom app protocol is the next hardening step if you want to avoid `file://` behavior entirely.
 
 ## Key decisions
 

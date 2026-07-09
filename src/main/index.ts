@@ -4,6 +4,7 @@ import {
   ipcMain,
   type IpcMainInvokeEvent,
 } from 'electron/main'
+import { shell } from 'electron'
 import squirrelStartup from 'electron-squirrel-startup'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -25,6 +26,35 @@ const rendererDevUrl = app.isPackaged
 
 type PingResult = IpcContract[typeof ipcChannels.ping]['result']
 
+function parseUrl(url: string) {
+  try {
+    return new URL(url)
+  } catch {
+    return undefined
+  }
+}
+
+function isTrustedRendererUrl(url: string) {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return false
+  }
+
+  if (rendererDevUrl) {
+    return parsedUrl.origin === new URL(rendererDevUrl).origin
+  }
+
+  parsedUrl.hash = ''
+  parsedUrl.search = ''
+
+  return parsedUrl.href === pathToFileURL(rendererPath).href
+}
+
+function isSafeExternalUrl(url: string) {
+  return parseUrl(url)?.protocol === 'https:'
+}
+
 function isTrustedSender(event: IpcMainInvokeEvent) {
   const senderFrame = event.senderFrame
 
@@ -32,16 +62,7 @@ function isTrustedSender(event: IpcMainInvokeEvent) {
     return false
   }
 
-  const senderUrl = new URL(senderFrame.url)
-
-  if (rendererDevUrl) {
-    return senderUrl.origin === new URL(rendererDevUrl).origin
-  }
-
-  senderUrl.hash = ''
-  senderUrl.search = ''
-
-  return senderUrl.href === pathToFileURL(rendererPath).href
+  return isTrustedRendererUrl(senderFrame.url)
 }
 
 function registerIpcHandlers() {
@@ -68,6 +89,22 @@ function createWindow() {
       preload: preloadPath,
       sandbox: true,
     },
+  })
+
+  window.webContents.on('will-navigate', (event, url) => {
+    if (!isTrustedRendererUrl(url)) {
+      event.preventDefault()
+    }
+  })
+
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    if (isSafeExternalUrl(url)) {
+      void shell.openExternal(url).catch((error) => {
+        console.error('[electron] failed to open external URL', error)
+      })
+    }
+
+    return { action: 'deny' }
   })
 
   if (rendererDevUrl) {
