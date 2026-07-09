@@ -12,7 +12,7 @@ Electron's process boundaries are kept explicit:
 
 - `src/main` owns application lifecycle, windows, IPC handlers, and privileged operations.
 - `src/preload` exposes a narrow API to the renderer through `contextBridge`.
-- The renderer entry, React components, styles, and assets live directly under `src`.
+- `src/renderer` contains the React/Vite app.
 - `src/shared` contains IPC contracts and types shared across processes.
 
 Each process has a separate Vite configuration:
@@ -28,6 +28,23 @@ dist/
 ├── main/
 ├── preload/
 └── renderer/
+```
+
+Source is organized like this:
+
+```text
+src/
+├── main/
+│   └── index.ts
+├── preload/
+│   ├── index.d.ts
+│   └── index.ts
+├── renderer/
+│   ├── index.html
+│   ├── public/
+│   └── src/
+└── shared/
+    └── ipc.ts
 ```
 
 ## Requirements
@@ -118,7 +135,7 @@ Vite builds the renderer, main process, and preload script through separate conf
 
 ### Own development orchestration
 
-`scripts/dev.mjs` coordinates Vite, Electron, rebuilds, restarts, and shutdown. There is one development command, but its behavior remains part of the repository.
+`scripts/dev.mjs` coordinates Vite, Electron, rebuilds, restarts, and shutdown. The renderer still uses the normal `vite.config.ts`, with its app root set to `src/renderer`.
 
 ### Keep Forge focused on distribution
 
