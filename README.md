@@ -49,7 +49,7 @@ src/
 
 ## Requirements
 
-- Node.js 20.19+ or 22.12+
+- Node.js `^20.19.0 || >=22.12.0`
 - npm
 
 ## Getting started
@@ -118,12 +118,11 @@ The current setup includes:
 - IPC sender and argument validation
 - navigation and new-window restrictions
 - a renderer Content Security Policy
+- a custom production protocol instead of `file://`
 - ASAR packaging
 - restrictive Electron fuses for packaged applications
 
 The renderer does not receive direct access to `ipcRenderer`, Node.js, the filesystem, or other privileged Electron APIs. Add new capabilities through a typed preload API and validate every request in the main process.
-
-Production still uses `file://` through `loadFile`. A custom app protocol is the next hardening step if you want to avoid `file://` behavior entirely.
 
 ## Key decisions
 
