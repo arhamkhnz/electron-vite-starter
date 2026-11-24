@@ -2,7 +2,7 @@
 
 A minimal foundation for building Electron applications with React, TypeScript, and Vite.
 
-The project uses Electron directly. It does not use `electron-vite`, `vite-plugin-electron`, or Electron Forge's Vite plugin. The build and development workflow stays visible in the repository instead of being hidden behind an Electron-specific wrapper.
+The project uses Electron directly, with Vite configs and scripts in the repository for development and builds.
 
 This starter provides the application infrastructure. It does not prescribe routing, state management, databases, authentication, telemetry, or product architecture.
 
@@ -87,15 +87,13 @@ npm run make              # Build and create platform distributables
 
 Oxlint uses its built-in defaults. Extend `oxlint.config.ts` as project requirements evolve. Oxfmt uses the starter author's preferred defaults in `oxfmt.config.ts`; adapt them to the project's conventions when needed.
 
-Forge writes packaged applications and distributable files to `out/`.
-
 ## Packaging
 
-Electron Forge is used only for distribution. It does not control the development server or compile the application source.
+Electron Builder packages the Vite build using `electron-builder.ts` and writes its output to `out/`.
 
-The current makers produce:
+The configured targets produce:
 
-- Windows: Squirrel installer
+- Windows: NSIS installer
 - macOS: ZIP and DMG
 - Linux: deb and RPM packages
 
@@ -108,10 +106,10 @@ npm run make
 Create macOS distributables explicitly:
 
 ```bash
-npm run make -- --platform=darwin
+npm run make -- --mac
 ```
 
-Some distributables require platform-specific tools and should be built on their target operating system. Code signing, macOS notarization, and publishing are not configured yet.
+Some distributables require platform-specific tools and should be built on their target operating system. macOS packages use ad hoc signing. Notarization and publishing are disabled.
 
 ## Security baseline
 
@@ -144,9 +142,9 @@ Vite builds the renderer, main process, and preload script through separate conf
 
 `scripts/dev.mjs` coordinates Vite, Electron, rebuilds, restarts, and shutdown. The renderer still uses the normal `vite.config.ts`, with its app root set to `src/renderer`.
 
-### Keep Forge focused on distribution
+### Keep Electron Builder focused on distribution
 
-Forge handles packaging, installers, Electron fuses, and future signing or publishing work. It is not involved in the application development loop.
+Electron Builder handles packaging, installers, and Electron fuses. The existing Vite scripts handle development and compilation.
 
 ### Keep IPC narrow and typed
 

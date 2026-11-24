@@ -1,13 +1,8 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, net, protocol, type IpcMainInvokeEvent } from "electron/main";
 import { shell } from "electron";
-import squirrelStartup from "electron-squirrel-startup";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { ipcChannels, type IpcContract } from "../shared/ipc.js";
-
-if (squirrelStartup) {
-  app.quit();
-}
 
 const rendererProtocol = "app";
 const rendererHost = "renderer";
